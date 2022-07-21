@@ -1,0 +1,216 @@
+# There you can se the code of this little program:
+import os
+import numpy as np
+import datetime
+
+current_time = datetime.datetime.now()
+a = current_time.month
+b = 0
+i = 0
+while a > 10:
+    b = a - 10 * i
+    i += 1
+    if b < 10:
+        a = int(a / 10)
+        break
+
+if a == 10:
+    a = 1
+    b = 0
+elif a < 10:
+    b = a
+    a = 0
+c = current_time.day
+d = 0
+i = 0
+if c > 10:
+    while c > 10:
+        d = c - 10 * i
+        i += 1
+        if d < 10:
+            c = int(c / 10)
+            break
+elif c == 10:
+    c = 1
+    d = 0
+elif c < 10:
+    d = c
+    c = 0
+listas = [a, b, c, d]
+
+j = 0
+k = 0
+i_c = 0
+i = 0
+
+z = np.array([listas]).reshape(2, 2)
+det = np.linalg.det(z)
+round(det)
+
+while det == 0:
+    if z[j, k] == 9:
+        if k == 2 and j != 2:
+            k = 0
+            j += 1
+        elif k == 2 and j == 2:
+            j = 0
+            k = 0
+    else:
+        z[j, k] += 1
+        k += 1
+        if k == 2 and j != 2:
+            k = 0
+            j += 1
+        elif k == 2 and j == 2:
+            j = 0
+            k = 0
+    det = np.linalg.det(z)
+    round(det)
+m_inv = np.linalg.inv(z)
+
+decimales = False
+for i in np.nditer(m_inv):
+    if i == 0:
+        pass
+    else:
+        compr_decimales = abs(i) - abs(int(i))
+        if compr_decimales != 0:
+            decimales = True
+
+if decimales:
+    imm = None
+    for i in range(37):
+        j = i
+        iter_z = det
+        x = iter_z * i
+        x = x % 37
+        x = round(x)
+        if x == 1:
+            imm = j
+            m_adj1 = m_inv * det
+            m_mod = (m_adj1 * imm) % 37
+            break
+
+elif not decimales:
+    m_mod = m_inv
+'''
+m_inv_m = (m_inv * imm) % 37
+print(m_inv_m)'''
+MINUSCULAS = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'ñ', 'o', 'p', 'q', 'r', 's',
+              't', 'u', 'v', 'w', 'x', 'y', 'z', ' ', 'à', 'è', 'é', 'í', 'ó', 'ò', 'ú', ',', '.']
+MAYUSCULAS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'Ñ', 'O', 'P', 'Q', 'R', 'S',
+              'T', 'U', 'V', 'W', 'X', 'Y', 'Z', ' ', 'À', 'È', 'É', 'Í', 'Ò', 'Ó', 'Ú', ',', '.']
+NUMEROS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17',
+           '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32', '33', '34',
+           '35', '36', '37']
+prog = None
+
+while prog != "1" and prog != "2" and prog != "3":
+    prog = input("\n¿Qué quieres hacer?\n [ 1 Para encriptar | 2 Para desencriptar | 3 Salir.]:\n")
+
+    if prog == "1":
+        NUMEROS = []
+        i = 0
+
+        for letter in MINUSCULAS:
+            NUMEROS.append(i)
+            i += 1
+
+        texto = list(input("\nIntroduce el texto a encriptar: "))
+
+        numeros_conv = []
+        while len(texto) % 4 != 0:
+            texto.append(" ")
+        for letter in texto:
+            if letter in MINUSCULAS:
+                numeros_conv.append(MINUSCULAS.index(letter))
+            elif letter in MAYUSCULAS:
+                numeros_conv.append(MAYUSCULAS.index(letter))
+
+        columnas = len(numeros_conv) / 2
+        matriz = np.zeros((2, int(columnas)))
+
+        j = 0
+        k = 0
+        f = 0
+        i = 0
+
+        a = np.zeros((2, 2))
+        for number in numeros_conv:
+            a[k, f] = number
+            f += 1
+            if f == 2:
+                f = 0
+                k += 1
+            if k == 2:
+                b = np.matmul(a, z)
+                k = 0
+                f = 0
+                for numero in np.nditer(b):
+                    numeros_conv[j] = int(numero)
+                    j += 1
+                    i += 1
+        i = 0
+        mensaje_mayus = []
+        for i in range(len(numeros_conv)):
+            numeros_conv[i] = numeros_conv[i] % 37
+        for n in numeros_conv:
+            mensaje_mayus.append(MAYUSCULAS[n])
+        mensaje_mayus = "".join(mensaje_mayus)
+        print("El mensaje encriptado es el siguiente: \n")
+        print(mensaje_mayus)
+        input("\n\n\nPulsa cualquier tecla para continuar para continuar...")
+        os.system('cls')
+        prog = None
+
+    elif prog == "2":
+        mensaje_simb2 = input("\nIntroduce el texto: \n")
+        list(mensaje_simb2)
+        mensaje = []
+        i = 0
+        for i in mensaje_simb2:
+            mensaje.append(MAYUSCULAS.index(i))
+        columnas = len(mensaje) / 2
+        matriz = np.zeros((2, int(columnas)))
+
+        i_f = 0
+        i_c = 0
+        j = 0
+        k = 0
+        f = 0
+        i = 0
+
+        a = np.zeros((2, 2))
+        num_final = []
+        for number in mensaje:
+            a[k, f] = number
+            f += 1
+            if f == 2:
+                f = 0
+                k += 1
+            if k == 2:
+                k = 0
+                f = 0
+                b = np.matmul(a, m_mod)
+                b = np.reshape(b, 4)
+                b = b.tolist()
+                for i in range(len(b)):
+                    b[i] = round(b[i])
+                for i in b:
+                    num_final.append(i)
+        for i in range(len(num_final)):
+            num_final[i] = num_final[i] % 37
+        text_pla = []
+        for i in range(len(num_final)):
+            text_pla.append(MAYUSCULAS[num_final[i]])
+
+        text_pla = "".join(text_pla)
+        print("\n\nEl mensaje descifrado es:")
+        print(text_pla)
+        input("\n\nPulsa cualquier tecla para continuar...")
+        os.system('cls')
+        prog = None
+    elif prog == "3":
+        input("\nFin del programa. "
+              "\n\n\nPulsa cualquier tecla para continuar...")
+        break
